@@ -10,7 +10,6 @@ defaults: &defaults
             sudo apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
             sudo apt-get update 
             sudo apt-get install dotnet-dev-1.0.0-preview2-003131 
-            dotnet restore
       - run:
           name: Prepare environment variables
           command: | 
@@ -45,8 +44,9 @@ defaults: &defaults
       #       npm install
       #       dotnet test
       - run:
-          name: Prepare tests
+          name: Run tests
           command: |
+            dotnet restore
             dotnet test
       - run:
           name: Execute automated tests
