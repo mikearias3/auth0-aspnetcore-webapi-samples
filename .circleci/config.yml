@@ -46,6 +46,7 @@ defaults: &defaults
       - run:
           name: Run tests
           command: |
+            dotnet --info
             dotnet restore
             dotnet test
       - run:
