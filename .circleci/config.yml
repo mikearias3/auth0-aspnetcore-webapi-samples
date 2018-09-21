@@ -3,22 +3,31 @@ defaults: &defaults
     steps:
       - attach_workspace:
           at: ~/
+      - dependencies:
+          pre:
+            - sudo sh -c 'echo "deb [arch=amd64] https://apt-mo.trafficmanager.net/repos/dotnet-release/ trusty main" > /etc/apt/sources.list.d/dotnetdev.list' 
+            - sudo apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
+            - sudo apt-get update 
+          override:
+            - sudo apt-get install dotnet-dev-1.0.0-preview2-003131 
+          post:
+            - dotnet restore
       - run:
           name: Prepare environment variables
           command: | 
             cd $AUTH0_CFG
             sed -i 's|{DOMAIN}|'$auth0_domain'|g' appsettings.json
             sed -i 's|{API_IDENTIFIER}|'$api_identifier'|g' appsettings.json
-      - run:
-          name: Background Server
-          command: cd $AUTH0_CFG && sh exec.sh
-          background: true
-      - run:
-          name: Wait until server is online 
-          command: |
-            until $(curl --silent --head --output /dev/null --fail http://localhost:3010/api/public); do
-                sleep 5
-            done
+      # - run:
+      #     name: Background Server
+      #     command: cd $AUTH0_CFG && sh exec.sh
+      #     background: true
+      # - run:
+      #     name: Wait until server is online 
+      #     command: |
+      #       until $(curl --silent --head --output /dev/null --fail http://localhost:3010/api/public); do
+      #           sleep 5
+      #       done
       - run:
           name: Prepare tests
           command: |
@@ -35,6 +44,7 @@ defaults: &defaults
             echo "AUTH0_CLIENT_SECRET_4=$client_secret_scopes_readwrite" >> .env
             echo "API_URL=http://localhost:3010" >> .env
             npm install
+            dotnet test
       - run:
           name: Execute automated tests
           command: cd test && npm test       
