@@ -10,6 +10,8 @@ defaults: &defaults
             sudo apt-key adv --keyserver apt-mo.trafficmanager.net --recv-keys 417A0893
             sudo apt-get update 
             sudo apt-get install dotnet-dev-1.0.0-preview2-003131 
+            sudo apt-get install apt-transport-https
+            sudo apt-get install dotnet-sdk-2.1
       - run:
           name: Prepare environment variables
           command: | 
